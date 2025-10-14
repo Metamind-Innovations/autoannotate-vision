@@ -9,12 +9,12 @@ def generate_cluster_preview_html(
     image_paths: List[Path],
     indices: np.ndarray,
     cluster_size: int,
-    output_path: Path = None
+    output_path: Path = None,
 ) -> Path:
-    
+
     if output_path is None:
         output_path = Path(f"cluster_{cluster_id}_preview.html")
-    
+
     html_content = f"""
     <!DOCTYPE html>
     <html>
@@ -102,11 +102,11 @@ def generate_cluster_preview_html(
         
         <div class="gallery">
     """
-    
+
     for idx, img_idx in enumerate(indices, 1):
         img_path = image_paths[img_idx]
         img_uri = img_path.absolute().as_uri()
-        
+
         html_content += f"""
             <div class="image-card">
                 <img src="{img_uri}" alt="{img_path.name}" loading="lazy">
@@ -116,16 +116,16 @@ def generate_cluster_preview_html(
                 </div>
             </div>
         """
-    
+
     html_content += """
         </div>
     </body>
     </html>
     """
-    
-    with open(output_path, 'w', encoding='utf-8') as f:
+
+    with open(output_path, "w", encoding="utf-8") as f:
         f.write(html_content)
-    
+
     return output_path
 
 

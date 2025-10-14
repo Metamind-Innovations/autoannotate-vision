@@ -9,18 +9,18 @@ from tqdm import tqdm
 
 
 class EmbeddingExtractor:
-    
+
     def __init__(
         self,
         model_name: Literal["clip", "dinov2", "dinov2-large"] = "dinov2",
         device: Optional[str] = None,
-        batch_size: int = 32
+        batch_size: int = 32,
     ):
         self.model_name = model_name
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self.batch_size = batch_size
         self._load_model()
-    
+
     def _load_model(self):
         if self.model_name == "clip":
             self.model = CLIPModel.from_pretrained("openai/clip-vit-large-patch14").to(self.device)
@@ -33,9 +33,9 @@ class EmbeddingExtractor:
             self.processor = AutoImageProcessor.from_pretrained("facebook/dinov2-large")
         else:
             raise ValueError(f"Unknown model: {self.model_name}")
-        
+
         self.model.eval()
-    
+
     def extract_single(self, image: Image.Image) -> np.ndarray:
         with torch.no_grad():
             if self.model_name == "clip":
@@ -45,29 +45,31 @@ class EmbeddingExtractor:
                 inputs = self.processor(images=image, return_tensors="pt").to(self.device)
                 outputs = self.model(**inputs)
                 embedding = outputs.last_hidden_state[:, 0]
-            
+
             embedding = F.normalize(embedding, p=2, dim=1)
             return embedding.cpu().numpy().flatten()
-    
+
     def extract_batch(self, images: List[Image.Image]) -> np.ndarray:
         embeddings = []
-        
+
         for i in tqdm(range(0, len(images), self.batch_size), desc="Extracting embeddings"):
-            batch = images[i:i + self.batch_size]
-            
+            batch = images[i : i + self.batch_size]
+
             with torch.no_grad():
                 if self.model_name == "clip":
-                    inputs = self.processor(images=batch, return_tensors="pt", padding=True).to(self.device)
+                    inputs = self.processor(images=batch, return_tensors="pt", padding=True).to(
+                        self.device
+                    )
                     batch_embeddings = self.model.get_image_features(**inputs)
                 else:
                     inputs = self.processor(images=batch, return_tensors="pt").to(self.device)
                     outputs = self.model(**inputs)
                     batch_embeddings = outputs.last_hidden_state[:, 0]
-                
+
                 batch_embeddings = F.normalize(batch_embeddings, p=2, dim=1)
                 embeddings.append(batch_embeddings.cpu().numpy())
-        
+
         return np.vstack(embeddings)
-    
+
     def __call__(self, images: List[Image.Image]) -> np.ndarray:
         return self.extract_batch(images)
