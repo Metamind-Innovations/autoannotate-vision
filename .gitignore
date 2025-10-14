@@ -89,5 +89,14 @@ tmp/
 temp/
 *.tmp
 
+# AutoAnnotate generated files
+cluster_*_preview.html
+*_preview.html
+output_*/
+test_images/
+annotated_output/
+output_test/
+output_api_test/
+
 # PyPI
 .pypirc
