@@ -1,116 +1,114 @@
 # AutoAnnotate-Vision Documentation
 
-Welcome to the **AutoAnnotate-Vision** documentation! This SDK provides state-of-the-art unsupervised auto-annotation for image classification tasks.
+Welcome to **AutoAnnotate-Vision** - a state-of-the-art SDK for unsupervised image auto-annotation with a graphical user interface!
 
 ## What is AutoAnnotate-Vision?
 
-AutoAnnotate-Vision is a Python SDK that automatically clusters and organizes unlabeled image datasets using cutting-edge vision models (CLIP, DINOv2) and advanced clustering algorithms. It's designed to bootstrap image classification datasets quickly and efficiently.
+AutoAnnotate-Vision automatically clusters and organizes unlabeled image datasets using cutting-edge vision models (CLIP, DINOv2). It features:
 
-## Key Features
-
-- **🎯 SOTA Vision Embeddings**: Support for CLIP, DINOv2, and DINOv2-Large models
-- **🔬 Multiple Clustering Algorithms**: K-means, HDBSCAN, Spectral Clustering, DBSCAN
-- **💬 Interactive Labeling**: CLI-based workflow with representative sample visualization
-- **📁 Automated Organization**: Automatic folder structure creation and file renaming
-- **✂️ Dataset Splitting**: Built-in train/val/test split functionality
-- **💾 Export Formats**: CSV and JSON label file generation
-- **🔌 Programmatic API**: Full Python API for custom workflows
+- 🎨 **Graphical User Interface** for easy folder selection and configuration
+- 🖼️ **HTML Preview** that opens sample images in your browser before labeling
+- 📁 **Smart Organization** that preserves original filenames
+- 🤖 **SOTA Models** including DINOv2 and CLIP
+- ✂️ **Auto Splits** for train/val/test datasets
 
 ## Quick Start
 
-### Installation
+### Using the GUI (Easiest!)
 
 ```bash
-pip install autoannotate-vision
+python run_autoannotate_gui.py
 ```
 
-### Basic Usage
+1. Select input folder with images
+2. Select output folder
+3. Set number of classes
+4. Click "Start Auto-Annotation"
+5. Review HTML previews in browser
+6. Name each cluster
+7. Done! Images organized with original filenames preserved
+
+### Using the CLI
 
 ```bash
-autoannotate annotate \
-    /path/to/images \
-    /path/to/output \
+autoannotate annotate /path/to/images /path/to/output \
     --n-clusters 10 \
     --method kmeans \
     --model dinov2
 ```
 
-### Python API
+### Using Python API
 
 ```python
 from autoannotate import AutoAnnotator
 
 annotator = AutoAnnotator(
     input_dir="./images",
-    output_dir="./organized",
+    output_dir="./output",
     model="dinov2",
     clustering_method="kmeans",
-    n_clusters=10
+    n_clusters=5
 )
 
-result = annotator.run_full_pipeline(create_splits=True)
+result = annotator.run_full_pipeline()
 ```
+
+## Key Features
+
+### HTML Image Preview
+
+When labeling clusters, AutoAnnotate automatically opens beautiful HTML previews in your browser showing representative sample images from each cluster. No more guessing what's in each cluster!
+
+### Original Filenames Preserved
+
+Unlike other tools, AutoAnnotate **preserves your original filenames**. Images are organized into class folders without renaming:
+
+```
+output/
+├── cats/
+│   ├── IMG_001.jpg  ✅ Original name!
+│   ├── my_cat.jpg   ✅ Original name!
+└── dogs/
+    ├── photo_5.jpg  ✅ Original name!
+```
+
+### Optional Dependencies
+
+- **HDBSCAN** is optional - install with `pip install autoannotate-vision[hdbscan]`
+- Core functionality works with just K-means, Spectral, and DBSCAN
 
 ## Use Cases
 
-AutoAnnotate-Vision is perfect for:
+- **Research Projects**: Quickly organize unlabeled datasets
+- **Data Preparation**: Bootstrap annotation for ML projects
+- **Dataset Exploration**: Discover natural groupings in images
+- **Quality Control**: Identify outliers and issues
 
-- **Research Projects**: Quickly organize unlabeled datasets for experiments
-- **Data Preparation**: Bootstrap annotation for large-scale ML projects
-- **Dataset Exploration**: Discover natural groupings in image collections
-- **Quality Control**: Identify outliers and data quality issues
-- **Transfer Learning**: Prepare datasets for fine-tuning vision models
+## Installation
 
-## Architecture
-
+```bash
+pip install autoannotate-vision
 ```
-Input Images → Embedding Extraction → Clustering → Interactive Labeling → Organized Dataset
-                     ↓                     ↓              ↓                    ↓
-                  CLIP/DINOv2      K-means/HDBSCAN   CLI Interface      Folders + Metadata
+
+Or from source:
+```bash
+git clone https://github.com/Metamind-Innovations/autoannotate-vision.git
+cd autoannotate-vision
+pip install -e .
 ```
 
 ## Navigation
 
 - **[API Reference](api_reference.md)**: Complete API documentation
-- **[Tutorials](tutorials.md)**: Step-by-step guides and examples
-- **[GitHub Repository](https://github.com/yourusername/autoannotate-vision)**: Source code and issues
-
-## Requirements
-
-- Python 3.8+
-- PyTorch 2.0+
-- CUDA (optional, for GPU acceleration)
+- **[Tutorials](tutorials.md)**: Step-by-step guides
 
 ## Support
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/autoannotate-vision/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/autoannotate-vision/discussions)
-- **Email**: research@metamind-innovations.com
+- **GitHub**: [Metamind-Innovations/autoannotate-vision](https://github.com/Metamind-Innovations/autoannotate-vision)
+- **Issues**: [Report bugs or request features](https://github.com/Metamind-Innovations/autoannotate-vision/issues)
 
 ## License
 
-AutoAnnotate-Vision is released under the MIT License. See [LICENSE](https://github.com/yourusername/autoannotate-vision/blob/main/LICENSE) for details.
+MIT License - see [LICENSE](https://github.com/Metamind-Innovations/autoannotate-vision/blob/main/LICENSE)
 
-## Citation
-
-If you use AutoAnnotate-Vision in your research, please cite:
-
-```bibtex
-@software{autoannotate_vision,
-  title={AutoAnnotate-Vision: SOTA Unsupervised Auto-Annotation for Image Classification},
-  author={MetaMind Innovations},
-  year={2025},
-  url={https://github.com/yourusername/autoannotate-vision}
-}
-```
-
-## Acknowledgments
-
-Built for the **RAIDO Project** (HORIZON-CL4-2023-HUMAN-01-CNECT) by MetaMind Innovations (MINDS).
-
-Powered by:
-- [PyTorch](https://pytorch.org/)
-- [Hugging Face Transformers](https://huggingface.co/transformers/)
-- [scikit-learn](https://scikit-learn.org/)
-- [HDBSCAN](https://hdbscan.readthedocs.io/)
-- [UMAP](https://umap-learn.readthedocs.io/)
+**Made for the [RAIDO Project](https://raido-project.eu/)**

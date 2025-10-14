@@ -37,50 +37,33 @@ class ClusteringEngine:
         if not self.reduce_dims or embeddings.shape[1] <= self.target_dims:
             return embeddings
 
-        n_samples, n_features = embeddings.shape
-        max_components = min(self.target_dims, n_samples - 1, n_features - 1)
-        if max_components < 2:
-            return embeddings
-
         if embeddings.shape[1] > 300:
-
-            self.dim_reducer = PCA(n_components=max_components, random_state=self.random_state)
+            self.dim_reducer = PCA(n_components=self.target_dims, random_state=self.random_state)
         else:
-
-            n_neighbors = min(15, max(2, n_samples - 1))
-
-            try:
-                self.dim_reducer = umap.UMAP(
-                    n_components=max_components,
-                    random_state=self.random_state,
-                    n_neighbors=n_neighbors,
-                )
-            except Exception as e:
-
-                print(f"Warning: UMAP failed, falling back to PCA. Error: {e}")
-                self.dim_reducer = PCA(n_components=max_components, random_state=self.random_state)
+            n_components = min(self.target_dims, embeddings.shape[1] - 1)
+            self.dim_reducer = umap.UMAP(
+                n_components=n_components,
+                random_state=self.random_state,
+                n_neighbors=min(15, embeddings.shape[0] - 1),
+            )
 
         return self.dim_reducer.fit_transform(embeddings)
 
     def fit_predict(self, embeddings: np.ndarray) -> np.ndarray:
+        # Validate n_clusters BEFORE any processing
+        if self.method in ["kmeans", "spectral"] and self.n_clusters is None:
+            raise ValueError(f"n_clusters must be specified for {self.method}")
+
         embeddings_scaled = self.scaler.fit_transform(embeddings)
         embeddings_reduced = self._reduce_dimensionality(embeddings_scaled)
 
         if self.method == "kmeans":
-            if self.n_clusters is None:
-                raise ValueError("n_clusters must be specified for kmeans")
             self.clusterer = KMeans(
                 n_clusters=self.n_clusters, random_state=self.random_state, n_init=10
             )
             labels = self.clusterer.fit_predict(embeddings_reduced)
 
         elif self.method == "hdbscan":
-            if not HDBSCAN_AVAILABLE:
-                raise ImportError(
-                    "HDBSCAN is not installed. Install it with:\n"
-                    "  pip install autoannotate-vision[hdbscan]\n"
-                    "Or use a different clustering method: 'kmeans', 'spectral', or 'dbscan'"
-                )
             min_cluster_size = max(5, embeddings.shape[0] // 100)
             self.clusterer = hdbscan.HDBSCAN(
                 min_cluster_size=min_cluster_size,

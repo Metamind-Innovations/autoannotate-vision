@@ -2,6 +2,280 @@
 
 Complete API documentation for AutoAnnotate-Vision.
 
+## GUI Application
+
+### Running the GUI
+
+```bash
+python run_autoannotate_gui.py
+```
+
+The GUI provides:
+- Folder browsers for input/output selection
+- Model selection dropdown
+- Clustering method configuration
+- Progress tracking
+- HTML preview integration
+
+## Core Classes
+
+### `AutoAnnotator`
+
+Main class for the auto-annotation pipeline.
+
+```python
+class AutoAnnotator(
+    input_dir: Path,
+    output_dir: Path,
+    model: Literal["clip", "dinov2", "dinov2-large"] = "dinov2",
+    clustering_method: Literal["kmeans", "spectral", "dbscan"] = "kmeans",
+    n_clusters: Optional[int] = None,
+    batch_size: int = 32,
+    recursive: bool = False,
+    reduce_dims: bool = True
+)
+```
+
+**Parameters:**
+- `input_dir`: Directory containing input images
+- `output_dir`: Directory for organized output
+- `model`: Vision model for embeddings
+- `clustering_method`: Clustering algorithm (hdbscan available if installed)
+- `n_clusters`: Number of clusters (required for kmeans/spectral)
+- `batch_size`: Batch size for embedding extraction
+- `recursive`: Search for images recursively
+- `reduce_dims`: Apply dimensionality reduction
+
+**Methods:**
+
+#### `load_images()`
+Load images from input directory.
+
+**Returns:** `Tuple[List[Image.Image], List[Path]]`
+
+#### `extract_embeddings()`
+Extract embeddings from loaded images.
+
+**Returns:** `np.ndarray` - Shape (n_images, embedding_dim)
+
+#### `cluster()`
+Perform clustering on embeddings.
+
+**Returns:** `np.ndarray` - Cluster labels
+
+#### `interactive_labeling(n_samples: int = 5)`
+Start interactive labeling session with HTML preview.
+
+**Parameters:**
+- `n_samples`: Number of representative samples per cluster
+
+**Returns:** `Dict[int, str]` - Mapping of cluster IDs to class names
+
+**Note:** Opens HTML preview in browser showing sample images from each cluster.
+
+#### `organize_dataset(class_names: Optional[Dict[int, str]] = None, copy_files: bool = True)`
+Organize dataset into labeled folders. **Preserves original filenames.**
+
+**Parameters:**
+- `class_names`: Cluster ID to class name mapping
+- `copy_files`: Copy files (True) or create symlinks (False)
+
+**Returns:** `Dict` - Organization metadata
+
+#### `run_full_pipeline(**kwargs)`
+Run complete annotation pipeline.
+
+**Returns:** `Dict` - Pipeline results
+
+---
+
+## HTML Preview Module
+
+### `generate_cluster_preview_html()`
+
+Generate HTML preview of cluster samples.
+
+```python
+def generate_cluster_preview_html(
+    cluster_id: int,
+    image_paths: List[Path],
+    indices: np.ndarray,
+    cluster_size: int,
+    output_path: Path = None
+) -> Path
+```
+
+Creates a beautiful HTML page with:
+- Image thumbnails in a grid layout
+- Cluster statistics
+- Hover effects
+- Responsive design
+
+Saved to temp directory by default and auto-cleaned after use.
+
+---
+
+## Embedding Module
+
+### `EmbeddingExtractor`
+
+Extract embeddings from images using pre-trained vision models.
+
+```python
+class EmbeddingExtractor(
+    model_name: Literal["clip", "dinov2", "dinov2-large"] = "dinov2",
+    device: Optional[str] = None,
+    batch_size: int = 32
+)
+```
+
+**Methods:**
+
+#### `extract_batch(images: List[Image.Image])`
+Extract embeddings from a batch of images.
+
+**Returns:** `np.ndarray` - 2D array (n_images, embedding_dim)
+
+---
+
+## Clustering Module
+
+### `ClusteringEngine`
+
+Perform clustering on image embeddings.
+
+```python
+class ClusteringEngine(
+    method: Literal["kmeans", "spectral", "dbscan"] = "kmeans",
+    n_clusters: Optional[int] = None,
+    reduce_dims: bool = True,
+    target_dims: int = 50,
+    random_state: int = 42
+)
+```
+
+**Note:** HDBSCAN available if installed: `pip install autoannotate-vision[hdbscan]`
+
+**Methods:**
+
+#### `fit_predict(embeddings: np.ndarray)`
+Fit clustering model and predict labels.
+
+**Returns:** `np.ndarray` - Cluster labels
+
+#### `get_representative_indices(embeddings, labels, n_samples=5)`
+Get representative sample indices for each cluster.
+
+**Returns:** `Dict[int, np.ndarray]` - Cluster ID to indices mapping
+
+---
+
+## Organization Module
+
+### `DatasetOrganizer`
+
+Organize annotated images into structured folders.
+
+```python
+class DatasetOrganizer(output_dir: Path)
+```
+
+**Methods:**
+
+#### `organize_by_clusters(image_paths, labels, class_names, copy_files=True)`
+Organize images by cluster assignments. **Preserves original filenames.**
+
+**Important:** Original filenames are kept. Only the folder structure is created.
+
+**Returns:** `Dict` - Organization metadata
+
+#### `create_split(train_ratio=0.7, val_ratio=0.15, test_ratio=0.15)`
+Create train/val/test splits.
+
+**Returns:** `Dict` - Split information
+
+---
+
+## Configuration
+
+### Available Models
+
+| Model | Embedding Dim | Speed | Best For |
+|-------|---------------|-------|----------|
+| `clip` | 768 | Fast | General images |
+| `dinov2` | 768 | Fast | Recommended |
+| `dinov2-large` | 1024 | Slower | High quality |
+
+### Clustering Methods
+
+| Method | Auto-clusters | Handles Noise | Requires n_clusters | Availability |
+|--------|---------------|---------------|---------------------|--------------|
+| `kmeans` | ❌ | ❌ | ✅ | Built-in |
+| `spectral` | ❌ | ❌ | ✅ | Built-in |
+| `dbscan` | ✅ | ✅ | ❌ | Built-in |
+| `hdbscan` | ✅ | ✅ | ❌ | Optional* |
+
+*Install with: `pip install autoannotate-vision[hdbscan]`
+
+---
+
+## CLI Commands
+
+### `autoannotate annotate`
+
+```bash
+autoannotate annotate INPUT_DIR OUTPUT_DIR [OPTIONS]
+```
+
+**Options:**
+- `-n, --n-clusters INTEGER`: Number of clusters
+- `-m, --method`: Clustering method
+- `--model`: Embedding model
+- `-b, --batch-size`: Batch size (default: 16)
+- `--create-splits`: Create train/val/test splits
+
+---
+
+## Examples
+
+### GUI Usage
+
+```bash
+python run_autoannotate_gui.py
+```
+
+Click buttons, select folders, click "Start". HTML previews open automatically!
+
+### Basic Pipeline
+
+```python
+from autoannotate import AutoAnnotator
+
+annotator = AutoAnnotator(
+    input_dir="./images",
+    output_dir="./output",
+    model="dinov2",
+    clustering_method="kmeans",
+    n_clusters=5
+)
+
+result = annotator.run_full_pipeline()
+```
+
+### Without Interactive Labeling
+
+```python
+annotator = AutoAnnotator(...)
+annotator.load_images()
+annotator.extract_embeddings()
+annotator.cluster()
+
+class_names = {0: "cats", 1: "dogs", 2: "birds"}
+annotator.organize_dataset(class_names=class_names)
+```
+
+**Original filenames preserved in all cases!**
+
 ## Core Classes
 
 ### `AutoAnnotator`

@@ -2,7 +2,372 @@
 
 Step-by-step tutorials for using AutoAnnotate-Vision.
 
-## Tutorial 1: Quick Start with CLI
+## Tutorial 1: Quick Start with GUI
+
+### The Easiest Way to Start!
+
+1. **Launch the GUI:**
+```bash
+python run_autoannotate_gui.py
+```
+
+2. **Select Input Folder**
+   - Click "Browse..." next to "Input Folder"
+   - Navigate to your folder containing images
+   - Click "Select Folder"
+
+3. **Select Output Folder**
+   - Click "Browse..." next to "Output Folder"
+   - Choose where you want organized images
+   - Click "Select Folder"
+
+4. **Configure Settings**
+   - Number of Classes: Set to how many categories you expect (e.g., 5)
+   - Model: Choose "dinov2" (recommended)
+   - Batch Size: Leave at 16 (or lower if memory issues)
+
+5. **Click "Start Auto-Annotation"**
+
+6. **Review HTML Previews**
+   - Browser tabs will open showing sample images from each cluster
+   - Review the images to understand what's in each cluster
+
+7. **Name Clusters**
+   - Return to terminal/command prompt
+   - For each cluster, type a class name (e.g., "cats", "dogs")
+   - Or type "skip" to skip a cluster
+
+8. **Done!**
+   - Images are organized into folders with **original filenames preserved**
+   - Check the output folder for results
+
+---
+
+## Tutorial 2: CLI Quick Start
+
+### Run from Command Line
+
+```bash
+autoannotate annotate ./my_images ./output \
+    --n-clusters 5 \
+    --method kmeans \
+    --model dinov2 \
+    --create-splits
+```
+
+**What happens:**
+1. Loads all images from `./my_images`
+2. Extracts embeddings using DINOv2
+3. Clusters into 5 groups
+4. Opens HTML previews in browser
+5. Asks you to name each cluster
+6. Organizes images (original filenames kept!)
+7. Creates train/val/test splits
+
+---
+
+## Tutorial 3: Python API - Full Pipeline
+
+```python
+from autoannotate import AutoAnnotator
+from pathlib import Path
+
+annotator = AutoAnnotator(
+    input_dir=Path("./images"),
+    output_dir=Path("./organized"),
+    model="dinov2",
+    clustering_method="kmeans",
+    n_clusters=5
+)
+
+result = annotator.run_full_pipeline(
+    n_samples=5,
+    create_splits=True
+)
+
+print(f"Processed {result['n_images']} images")
+print(f"Created {result['n_clusters']} classes")
+```
+
+---
+
+## Tutorial 4: Step-by-Step Control
+
+For more control over each step:
+
+```python
+from autoannotate import AutoAnnotator
+
+annotator = AutoAnnotator(
+    input_dir="./images",
+    output_dir="./output",
+    model="dinov2",
+    clustering_method="kmeans",
+    n_clusters=5
+)
+
+images, paths = annotator.load_images()
+print(f"Loaded {len(images)} images")
+
+embeddings = annotator.extract_embeddings()
+print(f"Embeddings: {embeddings.shape}")
+
+labels = annotator.cluster()
+stats = annotator.get_cluster_stats()
+print(f"Found {stats['n_clusters']} clusters")
+
+class_names = annotator.interactive_labeling(n_samples=7)
+
+annotator.organize_dataset(copy_files=True)
+
+annotator.create_splits()
+
+annotator.export_labels(format="csv")
+```
+
+---
+
+## Tutorial 5: Programmatic Labeling (No User Input)
+
+Skip interactive labeling:
+
+```python
+from autoannotate import AutoAnnotator
+
+annotator = AutoAnnotator(
+    input_dir="./images",
+    output_dir="./output",
+    model="dinov2",
+    clustering_method="kmeans",
+    n_clusters=3
+)
+
+annotator.load_images()
+annotator.extract_embeddings()
+annotator.cluster()
+
+class_names = {
+    0: "cats",
+    1: "dogs",
+    2: "birds"
+}
+
+annotator.organize_dataset(class_names=class_names)
+annotator.export_labels()
+```
+
+**Output structure:**
+```
+output/
+├── cats/
+│   ├── IMG_001.jpg  ✅ Original name!
+│   └── my_cat.jpg   ✅ Original name!
+├── dogs/
+└── birds/
+```
+
+---
+
+## Tutorial 6: Using Individual Components
+
+### Extract Embeddings Only
+
+```python
+from autoannotate.core.embeddings import EmbeddingExtractor
+from autoannotate.utils.image_loader import ImageLoader
+
+loader = ImageLoader("./images")
+images, paths = loader.load_images()
+
+extractor = EmbeddingExtractor(model_name="dinov2")
+embeddings = extractor(images)
+
+import numpy as np
+np.save("embeddings.npy", embeddings)
+```
+
+### Cluster Pre-computed Embeddings
+
+```python
+from autoannotate.core.clustering import ClusteringEngine
+import numpy as np
+
+embeddings = np.load("embeddings.npy")
+
+clusterer = ClusteringEngine(method="kmeans", n_clusters=5)
+labels = clusterer.fit_predict(embeddings)
+
+stats = clusterer.get_cluster_stats(labels)
+print(f"Clusters: {stats}")
+```
+
+---
+
+## Tutorial 7: HTML Preview Feature
+
+The HTML preview feature automatically:
+- Opens in your default browser
+- Shows thumbnail grid of sample images
+- Displays cluster statistics
+- Uses responsive design
+- Saves to temp directory
+- Cleans up automatically after labeling
+
+You can also generate previews manually:
+
+```python
+from autoannotate.ui.html_preview import generate_cluster_preview_html
+from pathlib import Path
+
+html_path = generate_cluster_preview_html(
+    cluster_id=0,
+    image_paths=[Path("img1.jpg"), Path("img2.jpg")],
+    indices=np.array([0, 1]),
+    cluster_size=10
+)
+
+print(f"Preview saved to: {html_path}")
+```
+
+---
+
+## Tutorial 8: Using Different Models
+
+### CLIP for Text-Image Tasks
+
+```python
+annotator = AutoAnnotator(
+    input_dir="./images",
+    output_dir="./output",
+    model="clip",  # Good for general images
+    clustering_method="kmeans",
+    n_clusters=5
+)
+```
+
+### DINOv2-Large for High Quality
+
+```python
+annotator = AutoAnnotator(
+    input_dir="./images",
+    output_dir="./output",
+    model="dinov2-large",  # Best quality, slower
+    clustering_method="kmeans",
+    n_clusters=5,
+    batch_size=8  # Lower batch size for large model
+)
+```
+
+---
+
+## Tutorial 9: Using HDBSCAN (Optional)
+
+If you have HDBSCAN installed:
+
+```bash
+pip install autoannotate-vision[hdbscan]
+```
+
+Then:
+
+```python
+annotator = AutoAnnotator(
+    input_dir="./images",
+    output_dir="./output",
+    model="dinov2",
+    clustering_method="hdbscan",  # Auto-determines clusters!
+    n_clusters=None  # Not needed for HDBSCAN
+)
+
+result = annotator.run_full_pipeline()
+```
+
+---
+
+## Tutorial 10: Custom Train/Val/Test Splits
+
+```python
+from autoannotate import AutoAnnotator
+
+annotator = AutoAnnotator(
+    input_dir="./images",
+    output_dir="./output",
+    clustering_method="kmeans",
+    n_clusters=10
+)
+
+annotator.run_full_pipeline()
+
+annotator.create_splits(
+    train_ratio=0.8,
+    val_ratio=0.1,
+    test_ratio=0.1
+)
+```
+
+**Output:**
+```
+output/splits/
+├── train/
+│   ├── class1/
+│   └── class2/
+├── val/
+└── test/
+```
+
+---
+
+## Best Practices
+
+### 1. Choose the Right Model
+
+- **CLIP**: General images, faster
+- **DINOv2**: Recommended for most tasks
+- **DINOv2-Large**: When quality is critical
+
+### 2. Set Appropriate Batch Size
+
+- GPU with 8GB: batch_size=16
+- GPU with 4GB: batch_size=8
+- CPU only: batch_size=4
+
+### 3. Number of Clusters
+
+- Start with expected number of classes
+- Use HDBSCAN to auto-discover clusters
+- Can always re-run with different numbers
+
+### 4. Original Filenames
+
+- **Always preserved** - no need to worry about losing original names
+- Only folder structure changes
+- Safe to use on important datasets
+
+---
+
+## Troubleshooting
+
+**Issue**: Out of memory
+**Fix**: Reduce batch_size
+
+**Issue**: Clustering doesn't make sense
+**Fix**: Try different model or increase n_clusters
+
+**Issue**: HDBSCAN not available
+**Fix**: `pip install autoannotate-vision[hdbscan]` or use kmeans/spectral
+
+**Issue**: HTML preview doesn't open
+**Fix**: Check your default browser settings
+
+---
+
+## Next Steps
+
+- Read [API Reference](api_reference.md) for detailed documentation
+- Check [GitHub](https://github.com/Metamind-Innovations/autoannotate-vision) for examples
+- Report issues or request features
+
+**Made for the RAIDO Project** 🚀
 
 ### Prerequisites
 
