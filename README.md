@@ -256,18 +256,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **MetaMind Innovations (MINDS)**  
 Research & Development Team  
-[Your contact information]
-
-## 🗺️ Roadmap
-
-- [ ] Web-based UI for labeling
-- [ ] Support for video frame annotation
-- [ ] Active learning integration
-- [ ] Multi-modal clustering (image + text)
-- [ ] Export to popular frameworks (COCO, YOLO, Pascal VOC)
-- [ ] Confidence scoring for cluster assignments
-- [ ] Hierarchical clustering support
 
 ---
 
-Made with ❤️ for the RAIDO Project
+Made for the RAIDO Project
