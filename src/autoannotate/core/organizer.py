@@ -29,8 +29,6 @@ class DatasetOrganizer:
             "classes": {},
         }
 
-        class_counters = {label: 0 for label in class_names.keys()}
-
         for img_path, label in zip(image_paths, labels):
             label = int(label)
 
@@ -110,7 +108,7 @@ class DatasetOrganizer:
             if len(images) == 0:
                 continue
 
-            np.random.shuffle(images)
+            np.random.shuffle(images)  # type: ignore[arg-type]
 
             n_train = int(len(images) * train_ratio)
             n_val = int(len(images) * val_ratio)

@@ -47,7 +47,7 @@ class ClusteringEngine:
                 n_neighbors=min(15, embeddings.shape[0] - 1),
             )
 
-        reduced: np.ndarray = self.dim_reducer.fit_transform(embeddings)  # type: ignore[union-attr, attr-defined]
+        reduced: np.ndarray = self.dim_reducer.fit_transform(embeddings)  # type: ignore[union-attr, attr-defined]  # noqa: E501
         return reduced
 
     def fit_predict(self, embeddings: np.ndarray) -> np.ndarray:
@@ -63,7 +63,7 @@ class ClusteringEngine:
             self.clusterer = KMeans(
                 n_clusters=self.n_clusters, random_state=self.random_state, n_init=10
             )
-            labels = self.clusterer.fit_predict(embeddings_reduced)  # type: ignore[assignment, attr-defined]
+            labels = self.clusterer.fit_predict(embeddings_reduced)  # type: ignore[assignment, attr-defined]  # noqa: E501
 
         elif self.method == "hdbscan":
             min_cluster_size = max(5, embeddings.shape[0] // 100)
@@ -73,7 +73,7 @@ class ClusteringEngine:
                 cluster_selection_epsilon=0.0,
                 metric="euclidean",
             )
-            labels = self.clusterer.fit_predict(embeddings_reduced)  # type: ignore[assignment, union-attr, attr-defined]
+            labels = self.clusterer.fit_predict(embeddings_reduced)  # type: ignore[assignment, union-attr, attr-defined]  # noqa: E501
 
         elif self.method == "spectral":
             if self.n_clusters is None:
@@ -83,12 +83,12 @@ class ClusteringEngine:
                 random_state=self.random_state,
                 affinity="nearest_neighbors",
             )
-            labels = self.clusterer.fit_predict(embeddings_reduced)  # type: ignore[assignment, attr-defined]
+            labels = self.clusterer.fit_predict(embeddings_reduced)  # type: ignore[assignment, attr-defined]  # noqa: E501
 
         elif self.method == "dbscan":
             eps = self._estimate_eps(embeddings_reduced)
             self.clusterer = DBSCAN(eps=eps, min_samples=5)
-            labels = self.clusterer.fit_predict(embeddings_reduced)  # type: ignore[assignment, attr-defined]
+            labels = self.clusterer.fit_predict(embeddings_reduced)  # type: ignore[assignment, attr-defined]  # noqa: E501
 
         else:
             raise ValueError(f"Unknown clustering method: {self.method}")

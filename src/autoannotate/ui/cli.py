@@ -102,7 +102,7 @@ def annotate(
         )
         labels = clusterer.fit_predict(embeddings)
         stats = clusterer.get_cluster_stats(labels)
-        console.print(f"[green]✓[/green] Clustering complete\n")
+        console.print("[green]✓[/green] Clustering complete\n")
 
         session = InteractiveLabelingSession()
         session.display_cluster_stats(stats)
@@ -125,7 +125,7 @@ def annotate(
 
         console.print("\n[cyan]Organizing dataset...[/cyan]")
         organizer = DatasetOrganizer(output_dir)
-        metadata = organizer.organize_by_clusters(
+        organizer.organize_by_clusters(
             image_paths, labels, class_names, copy_files=copy, create_symlinks=not copy
         )
         console.print(f"[green]✓[/green] Dataset organized in {output_dir}\n")
@@ -136,7 +136,7 @@ def annotate(
 
         if create_splits:
             console.print("[cyan]Creating train/val/test splits...[/cyan]")
-            split_info = organizer.create_split()
+            organizer.create_split()
             console.print(f"[green]✓[/green] Created splits in {output_dir / 'splits'}\n")
 
         session.show_completion_message(output_dir)
