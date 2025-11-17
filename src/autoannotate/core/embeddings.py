@@ -1,6 +1,5 @@
 import torch
 import torch.nn.functional as F
-from torchvision import transforms
 from transformers import CLIPProcessor, CLIPModel, AutoImageProcessor, AutoModel
 from PIL import Image
 from typing import List, Literal, Optional
@@ -69,7 +68,8 @@ class EmbeddingExtractor:
                 batch_embeddings = F.normalize(batch_embeddings, p=2, dim=1)
                 embeddings.append(batch_embeddings.cpu().numpy())
 
-        return np.vstack(embeddings)
+        result: np.ndarray = np.vstack(embeddings)
+        return result
 
     def __call__(self, images: List[Image.Image]) -> np.ndarray:
         return self.extract_batch(images)

@@ -1,7 +1,7 @@
 import json
 import shutil
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Any
 from datetime import datetime
 import numpy as np
 
@@ -19,8 +19,8 @@ class DatasetOrganizer:
         class_names: Dict[int, str],
         copy_files: bool = True,
         create_symlinks: bool = False,
-    ) -> Dict:
-        organized_data = {
+    ) -> Dict[str, Any]:
+        organized_data: Dict[str, Any] = {
             "metadata": {
                 "created_at": datetime.now().isoformat(),
                 "total_images": len(image_paths),
@@ -101,7 +101,7 @@ class DatasetOrganizer:
             if d.is_dir() and d.name not in ["splits", "unclustered"]
         ]
 
-        split_info = {"train": [], "val": [], "test": []}
+        split_info: Dict[str, List[str]] = {"train": [], "val": [], "test": []}
 
         for class_dir in class_dirs:
             class_name = class_dir.name

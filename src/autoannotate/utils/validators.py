@@ -3,12 +3,7 @@ from typing import Optional, Union, List
 import numpy as np
 from PIL import Image
 
-from autoannotate.config import (
-    SUPPORTED_IMAGE_FORMATS,
-    MODEL_CONFIGS,
-    CLUSTERING_CONFIGS,
-    MIN_IMAGES_PER_CLUSTER,
-)
+from autoannotate.config import SUPPORTED_IMAGE_FORMATS, MODEL_CONFIGS, CLUSTERING_CONFIGS
 
 
 class ValidationError(Exception):

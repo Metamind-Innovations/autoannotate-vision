@@ -140,11 +140,11 @@ class InteractiveLabelingSession:
         table.add_column("Images", style="yellow")
 
         for cluster_id, class_name in sorted(class_names.items()):
-            n_images = np.sum(labels == cluster_id)
+            n_images: int = int(np.sum(labels == cluster_id))
             table.add_row(str(cluster_id), class_name, str(n_images))
 
         n_unlabeled = sum(1 for label in labels if label not in class_names and label != -1)
-        n_noise = np.sum(labels == -1)
+        n_noise: int = int(np.sum(labels == -1))
 
         if n_unlabeled > 0:
             table.add_row("-", "[dim]Unlabeled[/dim]", f"[dim]{n_unlabeled}[/dim]")

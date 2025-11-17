@@ -1,6 +1,7 @@
 import click
 from pathlib import Path
 import logging
+from typing import Literal, cast
 from rich.console import Console
 from rich.logging import RichHandler
 
@@ -87,12 +88,18 @@ def annotate(
         console.print(f"[green]✓[/green] Loaded {len(images)} images\n")
 
         console.print(f"[cyan]Extracting embeddings using {model}...[/cyan]")
-        extractor = EmbeddingExtractor(model_name=model, batch_size=batch_size)
+        extractor = EmbeddingExtractor(
+            model_name=cast(Literal["clip", "dinov2", "dinov2-large"], model), batch_size=batch_size
+        )
         embeddings = extractor(images)
         console.print(f"[green]✓[/green] Extracted embeddings: {embeddings.shape}\n")
 
         console.print(f"[cyan]Clustering with {method}...[/cyan]")
-        clusterer = ClusteringEngine(method=method, n_clusters=n_clusters, reduce_dims=reduce_dims)
+        clusterer = ClusteringEngine(
+            method=cast(Literal["kmeans", "hdbscan", "spectral", "dbscan"], method),
+            n_clusters=n_clusters,
+            reduce_dims=reduce_dims,
+        )
         labels = clusterer.fit_predict(embeddings)
         stats = clusterer.get_cluster_stats(labels)
         console.print(f"[green]✓[/green] Clustering complete\n")

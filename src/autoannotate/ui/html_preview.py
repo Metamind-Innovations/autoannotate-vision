@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 import webbrowser
 import numpy as np
 
@@ -9,7 +9,7 @@ def generate_cluster_preview_html(
     image_paths: List[Path],
     indices: np.ndarray,
     cluster_size: int,
-    output_path: Path = None,
+    output_path: Optional[Path] = None,
 ) -> Path:
 
     if output_path is None:

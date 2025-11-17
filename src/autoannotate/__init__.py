@@ -1,6 +1,7 @@
 from pathlib import Path
-from typing import Optional, Dict, Literal
+from typing import Optional, Dict, Literal, List
 import numpy as np
+from PIL import Image
 
 from autoannotate.core.embeddings import EmbeddingExtractor
 from autoannotate.core.clustering import ClusteringEngine
@@ -42,16 +43,16 @@ class AutoAnnotator:
         self.recursive = recursive
         self.reduce_dims = reduce_dims
 
-        self.loader = None
-        self.extractor = None
-        self.clusterer = None
-        self.organizer = None
+        self.loader: Optional[ImageLoader] = None
+        self.extractor: Optional[EmbeddingExtractor] = None
+        self.clusterer: Optional[ClusteringEngine] = None
+        self.organizer: Optional[DatasetOrganizer] = None
 
-        self.images = None
-        self.image_paths = None
-        self.embeddings = None
-        self.labels = None
-        self.class_names = None
+        self.images: Optional[List[Image.Image]] = None
+        self.image_paths: Optional[List[Path]] = None
+        self.embeddings: Optional[np.ndarray] = None
+        self.labels: Optional[np.ndarray] = None
+        self.class_names: Optional[Dict[int, str]] = None
 
     def load_images(self):
         self.loader = ImageLoader(self.input_dir, recursive=self.recursive)
@@ -79,11 +80,15 @@ class AutoAnnotator:
     def get_cluster_stats(self) -> Dict:
         if self.labels is None:
             raise ValueError("Run clustering first using cluster()")
+        if self.clusterer is None:
+            raise ValueError("Run clustering first using cluster()")
         return self.clusterer.get_cluster_stats(self.labels)
 
     def get_representatives(self, n_samples: int = 5) -> Dict[int, np.ndarray]:
         if self.embeddings is None or self.labels is None:
             raise ValueError("Extract embeddings and cluster first")
+        if self.clusterer is None:
+            raise ValueError("Run clustering first using cluster()")
 
         return self.clusterer.get_representative_indices(
             self.embeddings, self.labels, n_samples=n_samples
@@ -92,6 +97,8 @@ class AutoAnnotator:
     def interactive_labeling(self, n_samples: int = 5):
         if self.labels is None:
             raise ValueError("Run clustering first")
+        if self.image_paths is None:
+            raise ValueError("Load images first using load_images()")
 
         representatives = self.get_representatives(n_samples=n_samples)
         stats = self.get_cluster_stats()
@@ -113,6 +120,9 @@ class AutoAnnotator:
             if self.class_names is None:
                 raise ValueError("Provide class_names or run interactive_labeling() first")
             class_names = self.class_names
+
+        if self.image_paths is None or self.labels is None:
+            raise ValueError("Load images and run clustering first")
 
         self.organizer = DatasetOrganizer(self.output_dir)
         metadata = self.organizer.organize_by_clusters(
@@ -160,7 +170,7 @@ class AutoAnnotator:
                 self.create_splits()
 
         return {
-            "n_images": len(self.images),
+            "n_images": len(self.images) if self.images else 0,
             "n_clusters": len(self.class_names) if self.class_names else 0,
             "output_dir": str(self.output_dir),
         }

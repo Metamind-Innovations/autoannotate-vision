@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=65.0.0", "wheel"]
+requires = ["setuptools>=80.9.0", "wheel>=0.45.1"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,7 +7,7 @@ name = "autoannotate-vision"
 version = "0.1.0"
 description = "SOTA unsupervised auto-annotation SDK for image classification"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.10,<3.14"
 license = {file = "LICENSE"}
 authors = [
     {name = "MetaMind Innovations", email = "research@metamind-innovations.com"}
@@ -23,13 +23,16 @@ classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Topic :: Scientific/Engineering :: Image Recognition",
+    "Topic :: Scientific/Engineering :: Image Processing",
 ]
 
 dependencies = [
@@ -68,6 +71,7 @@ hdbscan = [
 autoannotate = "autoannotate.ui.cli:main"
 
 [project.urls]
+# TODO: Add actual links
 Homepage = "https://github.com/yourusername/autoannotate-vision"
 Documentation = "https://autoannotate-vision.readthedocs.io"
 Repository = "https://github.com/yourusername/autoannotate-vision"
@@ -81,7 +85,7 @@ autoannotate = ["py.typed"]
 
 [tool.black]
 line-length = 100
-target-version = ['py38', 'py39', 'py310', 'py311']
+target-version = ['py310', 'py311', 'py312', 'py313']
 include = '\.pyi?$'
 
 [tool.pytest.ini_options]
@@ -92,7 +96,8 @@ python_functions = ["test_*"]
 addopts = "-v --cov=autoannotate --cov-report=term-missing"
 
 [tool.mypy]
-python_version = "3.8"
+python_version = "3.10"
 warn_return_any = true
 warn_unused_configs = true
 ignore_missing_imports = true
+no_implicit_optional = true
