@@ -8,13 +8,13 @@ version = "0.1.0"
 description = "SOTA unsupervised auto-annotation SDK for image classification"
 readme = "README.md"
 requires-python = ">=3.10,<3.14"
-license = {file = "LICENSE"}
+license = { file = "LICENSE" }
 authors = [
-    {name = "MetaMind Innovations", email = "research@metamind-innovations.com"}
+    { name = "MetaMind Innovations", email = "research@metamind-innovations.com" }
 ]
 keywords = [
     "image-annotation",
-    "clustering", 
+    "clustering",
     "computer-vision",
     "auto-labeling",
     "machine-learning"
@@ -36,7 +36,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "numpy>=1.21.0",
+    "numpy>=2.0.0",
     "pillow>=9.0.0",
     "torch>=2.0.0",
     "torchvision>=0.15.0",
@@ -69,13 +69,12 @@ hdbscan = [
 
 [project.scripts]
 autoannotate = "autoannotate.ui.cli:main"
+autoannotate-gui = "autoannotate.ui.gui:main"
 
 [project.urls]
-# TODO: Add actual links
-Homepage = "https://github.com/yourusername/autoannotate-vision"
-Documentation = "https://autoannotate-vision.readthedocs.io"
-Repository = "https://github.com/yourusername/autoannotate-vision"
-"Bug Tracker" = "https://github.com/yourusername/autoannotate-vision/issues"
+Homepage = "https://github.com/Metamind-Innovations/autoannotate-vision"
+Documentation = "https://github.com/Metamind-Innovations/autoannotate-vision/blob/dev/README.md"
+Issues = "https://github.com/Metamind-Innovations/autoannotate-vision/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]

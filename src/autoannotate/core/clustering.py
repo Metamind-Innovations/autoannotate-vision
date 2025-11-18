@@ -11,7 +11,7 @@ try:
     HDBSCAN_AVAILABLE = True
 except ImportError:
     HDBSCAN_AVAILABLE = False
-    hdbscan = None
+    hdbscan = None  # type: ignore[assignment]
 
 
 class ClusteringEngine:
@@ -41,7 +41,7 @@ class ClusteringEngine:
             self.dim_reducer = PCA(n_components=self.target_dims, random_state=self.random_state)
         else:
             n_components = min(self.target_dims, embeddings.shape[1] - 1)
-            self.dim_reducer = umap.UMAP(
+            self.dim_reducer = umap.UMAP(  # type: ignore[union-attr]
                 n_components=n_components,
                 random_state=self.random_state,
                 n_neighbors=min(15, embeddings.shape[0] - 1),
