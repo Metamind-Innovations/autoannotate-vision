@@ -35,6 +35,12 @@ MODEL_CONFIGS = {
         "batch_size": 16,
         "max_image_size": (224, 224),
     },
+    "siglip2": {
+        "name": "google/siglip2-base-patch16-224",
+        "embedding_dim": 768,
+        "batch_size": 32,
+        "max_image_size": (224, 224),
+    },
 }
 
 

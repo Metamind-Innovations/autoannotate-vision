@@ -42,7 +42,7 @@ def cli():
 )
 @click.option(
     "--model",
-    type=click.Choice(["clip", "dinov2", "dinov2-large"]),
+    type=click.Choice(["clip", "dinov2", "dinov2-large", "siglip2"]),
     default="dinov2",
     help="Embedding model",
 )
@@ -89,7 +89,8 @@ def annotate(
 
         console.print(f"[cyan]Extracting embeddings using {model}...[/cyan]")
         extractor = EmbeddingExtractor(
-            model_name=cast(Literal["clip", "dinov2", "dinov2-large"], model), batch_size=batch_size
+            model_name=cast(Literal["clip", "dinov2", "dinov2-large", "siglip2"], model),
+            batch_size=batch_size,
         )
         embeddings = extractor(images)
         console.print(f"[green]✓[/green] Extracted embeddings: {embeddings.shape}\n")

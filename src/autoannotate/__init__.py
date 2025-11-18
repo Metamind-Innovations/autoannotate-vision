@@ -27,7 +27,7 @@ class AutoAnnotator:
         self,
         input_dir: Path,
         output_dir: Path,
-        model: Literal["clip", "dinov2", "dinov2-large"] = "dinov2",
+        model: Literal["clip", "dinov2", "dinov2-large", "siglip2"] = "dinov2",
         clustering_method: Literal["kmeans", "hdbscan", "spectral", "dbscan"] = "kmeans",
         n_clusters: Optional[int] = None,
         batch_size: int = 32,
