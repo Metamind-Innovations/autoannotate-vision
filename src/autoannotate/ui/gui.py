@@ -31,7 +31,7 @@ class AutoAnnotateGUI:
         # Title
         title = tk.Label(
             self.root,
-            text="🎯 AutoAnnotate-Vision",
+            text="AutoAnnotate-Vision",
             font=("Arial", 20, "bold"),
             fg="#667eea",
         )
@@ -42,7 +42,7 @@ class AutoAnnotateGUI:
         frame.pack(fill="both", expand=True)
 
         # Input Folder
-        tk.Label(frame, text="📁 Input Folder (Images):", font=("Arial", 11, "bold")).grid(
+        tk.Label(frame, text="Input Folder (Images):", font=("Arial", 11, "bold")).grid(
             row=0, column=0, sticky="w", pady=8
         )
         tk.Entry(frame, textvariable=self.input_folder, width=45, font=("Arial", 10)).grid(
@@ -58,7 +58,7 @@ class AutoAnnotateGUI:
         ).grid(row=0, column=2)
 
         # Output Folder
-        tk.Label(frame, text="📂 Output Folder:", font=("Arial", 11, "bold")).grid(
+        tk.Label(frame, text="Output Folder:", font=("Arial", 11, "bold")).grid(
             row=1, column=0, sticky="w", pady=8
         )
         tk.Entry(frame, textvariable=self.output_folder, width=45, font=("Arial", 10)).grid(
@@ -74,7 +74,7 @@ class AutoAnnotateGUI:
         ).grid(row=1, column=2)
 
         # Number of Classes
-        tk.Label(frame, text="🔢 Number of Classes:", font=("Arial", 11, "bold")).grid(
+        tk.Label(frame, text="Number of Classes:", font=("Arial", 11, "bold")).grid(
             row=2, column=0, sticky="w", pady=8
         )
         tk.Spinbox(
@@ -82,7 +82,7 @@ class AutoAnnotateGUI:
         ).grid(row=2, column=1, sticky="w", padx=10)
 
         # Model Selection
-        tk.Label(frame, text="🤖 Model:", font=("Arial", 11, "bold")).grid(
+        tk.Label(frame, text="Model:", font=("Arial", 11, "bold")).grid(
             row=3, column=0, sticky="w", pady=8
         )
         model_combo = ttk.Combobox(
@@ -96,7 +96,7 @@ class AutoAnnotateGUI:
         model_combo.grid(row=3, column=1, sticky="w", padx=10)
 
         # Batch Size
-        tk.Label(frame, text="⚡ Batch Size:", font=("Arial", 11, "bold")).grid(
+        tk.Label(frame, text="Batch Size:", font=("Arial", 11, "bold")).grid(
             row=4, column=0, sticky="w", pady=8
         )
         tk.Spinbox(
