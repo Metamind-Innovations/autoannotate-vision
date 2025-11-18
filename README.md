@@ -3,7 +3,6 @@
 **State-of-the-art unsupervised auto-annotation SDK for image classification with GUI**
 
 [![Tests](https://github.com/Metamind-Innovations/autoannotate-vision/actions/workflows/tests.yml/badge.svg)](https://github.com/Metamind-Innovations/autoannotate-vision/actions/workflows/tests.yml)
-[![codecov](https://codecov.io/gh/Metamind-Innovations/autoannotate-vision/branch/main/graph/badge.svg)](https://codecov.io/gh/Metamind-Innovations/autoannotate-vision)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
