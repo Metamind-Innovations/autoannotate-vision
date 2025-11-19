@@ -38,7 +38,9 @@ class ClusteringEngine:
             return embeddings
 
         if embeddings.shape[1] > 300:
-            self.dim_reducer = PCA(n_components=self.target_dims, random_state=self.random_state)
+            # PCA requires n_components < min(n_samples, n_features)
+            n_components = min(self.target_dims, embeddings.shape[0] - 1, embeddings.shape[1] - 1)
+            self.dim_reducer = PCA(n_components=n_components, random_state=self.random_state)
         else:
             n_components = min(self.target_dims, embeddings.shape[1] - 1)
             self.dim_reducer = umap.UMAP(  # type: ignore[union-attr]
@@ -54,6 +56,23 @@ class ClusteringEngine:
         # Validate n_clusters BEFORE any processing
         if self.method in ["kmeans", "spectral"] and self.n_clusters is None:
             raise ValueError(f"n_clusters must be specified for {self.method}")
+
+        # Validate minimum images per cluster (6 images per cluster minimum)
+        n_samples = embeddings.shape[0]
+        if self.method in ["kmeans", "spectral"] and self.n_clusters is not None:
+            min_required = 6 * self.n_clusters
+            if n_samples < min_required:
+                raise ValueError(
+                    f"Insufficient samples for {self.n_clusters} clusters. "
+                    f"Have {n_samples} images but need at least {min_required} "
+                    f"(minimum 6 images per cluster)."
+                )
+        elif n_samples < 6:
+            # For auto-clustering methods (hdbscan, dbscan), require minimum 6 images total
+            raise ValueError(
+                f"Insufficient samples for clustering. "
+                f"Have {n_samples} images but need at least 6 images minimum."
+            )
 
         embeddings_scaled = self.scaler.fit_transform(embeddings)
         embeddings_reduced = self._reduce_dimensionality(embeddings_scaled)

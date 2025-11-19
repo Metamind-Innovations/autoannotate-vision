@@ -116,7 +116,7 @@ labels = annotator.cluster()
 stats = annotator.get_cluster_stats()
 print(f"Found {stats['n_clusters']} clusters")
 
-class_names = annotator.interactive_labeling(n_samples=7)
+class_names = annotator.interactive_labeling(n_samples=6)
 
 annotator.organize_dataset(copy_files=True)
 
@@ -510,7 +510,7 @@ print(f"Cluster sizes: {stats['cluster_sizes']}")
 ### Interactive Labeling
 
 ```python
-class_names = annotator.interactive_labeling(n_samples=7)
+class_names = annotator.interactive_labeling(n_samples=6)
 print(f"Labeled {len(class_names)} classes")
 ```
 

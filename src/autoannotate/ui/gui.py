@@ -192,7 +192,7 @@ class AutoAnnotateGUI:
             self.update_status("Opening HTML preview for labeling...", "orange")
 
             # Interactive labeling (will open HTML previews)
-            class_names = annotator.interactive_labeling(n_samples=7)
+            class_names = annotator.interactive_labeling(n_samples=6)
 
             if class_names:
                 self.update_status("Organizing dataset...", "blue")
