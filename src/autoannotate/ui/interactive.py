@@ -41,6 +41,7 @@ class InteractiveLabelingSession:
         image_paths: List[Path],
         representative_indices: np.ndarray,
         cluster_size: int,
+        output_dir: Path,
     ):
         self.console.print(
             Panel(
@@ -58,7 +59,7 @@ class InteractiveLabelingSession:
             image_paths=image_paths,
             indices=representative_indices,
             cluster_size=cluster_size,
-            output_path=Path(f"cluster_{cluster_id}_preview.html"),
+            output_path=output_dir / f"cluster_{cluster_id}_preview.html",
         )
 
         self.console.print(f"[green]✓ Preview generated: {html_path}[/green]")
@@ -106,6 +107,7 @@ class InteractiveLabelingSession:
         labels: np.ndarray,
         representative_indices: Dict[int, np.ndarray],
         cluster_stats: Dict,
+        output_dir: Path,
     ):
         self.console.print("\n[bold blue]Starting Interactive Labeling Session[/bold blue]\n")
 
@@ -118,7 +120,7 @@ class InteractiveLabelingSession:
                 continue
 
             class_name = self.get_class_name_for_cluster(
-                cluster_id, image_paths, representative_indices[cluster_id], cluster_size
+                cluster_id, image_paths, representative_indices[cluster_id], cluster_size, output_dir
             )
 
             if class_name:

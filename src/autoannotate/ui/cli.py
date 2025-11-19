@@ -116,7 +116,7 @@ def annotate(
             f"[green]✓[/green] Found representatives for {len(representatives)} clusters\n"
         )
 
-        class_names = session.label_all_clusters(image_paths, labels, representatives, stats)
+        class_names = session.label_all_clusters(image_paths, labels, representatives, stats, output_dir)
 
         session.display_labeling_summary(class_names, labels)
 

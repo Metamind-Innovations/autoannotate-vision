@@ -107,7 +107,7 @@ class AutoAnnotator:
         session.display_cluster_stats(stats)
 
         self.class_names = session.label_all_clusters(
-            self.image_paths, self.labels, representatives, stats
+            self.image_paths, self.labels, representatives, stats, self.output_dir
         )
 
         session.display_labeling_summary(self.class_names, self.labels)

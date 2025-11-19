@@ -44,6 +44,9 @@ The easiest way to use AutoAnnotate-Vision:
 autoannotate-gui
 ```
 
+**Note:** Windows users need to have the latest C++ Redistributable installed which can be
+found [here](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170#latest-supported-redistributable-version)
+
 **Workflow:**
 
 1. 📁 Select input folder with images
