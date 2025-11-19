@@ -120,7 +120,11 @@ class InteractiveLabelingSession:
                 continue
 
             class_name = self.get_class_name_for_cluster(
-                cluster_id, image_paths, representative_indices[cluster_id], cluster_size, output_dir
+                cluster_id,
+                image_paths,
+                representative_indices[cluster_id],
+                cluster_size,
+                output_dir,
             )
 
             if class_name:
