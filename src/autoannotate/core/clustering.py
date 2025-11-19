@@ -1,5 +1,5 @@
 import numpy as np
-from typing import Literal, Optional, Tuple, Dict
+from typing import Literal, Optional, Dict, Any
 from sklearn.cluster import KMeans, SpectralClustering, DBSCAN
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
@@ -11,7 +11,7 @@ try:
     HDBSCAN_AVAILABLE = True
 except ImportError:
     HDBSCAN_AVAILABLE = False
-    hdbscan = None
+    hdbscan = None  # type: ignore[assignment]
 
 
 class ClusteringEngine:
@@ -41,13 +41,14 @@ class ClusteringEngine:
             self.dim_reducer = PCA(n_components=self.target_dims, random_state=self.random_state)
         else:
             n_components = min(self.target_dims, embeddings.shape[1] - 1)
-            self.dim_reducer = umap.UMAP(
+            self.dim_reducer = umap.UMAP(  # type: ignore[union-attr]
                 n_components=n_components,
                 random_state=self.random_state,
                 n_neighbors=min(15, embeddings.shape[0] - 1),
             )
 
-        return self.dim_reducer.fit_transform(embeddings)
+        reduced: np.ndarray = self.dim_reducer.fit_transform(embeddings)  # type: ignore[union-attr, attr-defined]  # noqa: E501
+        return reduced
 
     def fit_predict(self, embeddings: np.ndarray) -> np.ndarray:
         # Validate n_clusters BEFORE any processing
@@ -57,21 +58,22 @@ class ClusteringEngine:
         embeddings_scaled = self.scaler.fit_transform(embeddings)
         embeddings_reduced = self._reduce_dimensionality(embeddings_scaled)
 
+        labels: np.ndarray
         if self.method == "kmeans":
             self.clusterer = KMeans(
                 n_clusters=self.n_clusters, random_state=self.random_state, n_init=10
             )
-            labels = self.clusterer.fit_predict(embeddings_reduced)
+            labels = self.clusterer.fit_predict(embeddings_reduced)  # type: ignore[assignment, attr-defined]  # noqa: E501
 
         elif self.method == "hdbscan":
             min_cluster_size = max(5, embeddings.shape[0] // 100)
-            self.clusterer = hdbscan.HDBSCAN(
+            self.clusterer = hdbscan.HDBSCAN(  # type: ignore[union-attr]
                 min_cluster_size=min_cluster_size,
                 min_samples=5,
                 cluster_selection_epsilon=0.0,
                 metric="euclidean",
             )
-            labels = self.clusterer.fit_predict(embeddings_reduced)
+            labels = self.clusterer.fit_predict(embeddings_reduced)  # type: ignore[assignment, union-attr, attr-defined]  # noqa: E501
 
         elif self.method == "spectral":
             if self.n_clusters is None:
@@ -81,12 +83,12 @@ class ClusteringEngine:
                 random_state=self.random_state,
                 affinity="nearest_neighbors",
             )
-            labels = self.clusterer.fit_predict(embeddings_reduced)
+            labels = self.clusterer.fit_predict(embeddings_reduced)  # type: ignore[assignment, attr-defined]  # noqa: E501
 
         elif self.method == "dbscan":
             eps = self._estimate_eps(embeddings_reduced)
             self.clusterer = DBSCAN(eps=eps, min_samples=5)
-            labels = self.clusterer.fit_predict(embeddings_reduced)
+            labels = self.clusterer.fit_predict(embeddings_reduced)  # type: ignore[assignment, attr-defined]  # noqa: E501
 
         else:
             raise ValueError(f"Unknown clustering method: {self.method}")
@@ -102,11 +104,12 @@ class ClusteringEngine:
         distances = np.sort(distances[:, -1])
 
         knee_point = int(0.95 * len(distances))
-        return distances[knee_point]
+        eps_value: float = float(distances[knee_point])
+        return eps_value
 
-    def get_cluster_stats(self, labels: np.ndarray) -> Dict:
+    def get_cluster_stats(self, labels: np.ndarray) -> Dict[str, Any]:
         unique_labels = np.unique(labels)
-        n_noise = np.sum(labels == -1)
+        n_noise: int = int(np.sum(labels == -1))
 
         cluster_sizes = {}
         for label in unique_labels:

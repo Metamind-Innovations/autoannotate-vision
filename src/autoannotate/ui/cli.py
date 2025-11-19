@@ -1,6 +1,7 @@
 import click
 from pathlib import Path
 import logging
+from typing import Literal, cast
 from rich.console import Console
 from rich.logging import RichHandler
 
@@ -41,17 +42,17 @@ def cli():
 )
 @click.option(
     "--model",
-    type=click.Choice(["clip", "dinov2", "dinov2-large"]),
-    default="dinov2",
+    type=click.Choice(["clip", "dinov2", "dinov2-large", "siglip2"]),
+    default="siglip2",
     help="Embedding model",
 )
 @click.option(
-    "--batch-size", "-b", type=int, default=32, help="Batch size for embedding extraction"
+    "--batch-size", "-b", type=int, default=16, help="Batch size for embedding extraction"
 )
 @click.option("--recursive", "-r", is_flag=True, help="Search for images recursively")
 @click.option("--reduce-dims/--no-reduce-dims", default=True, help="Apply dimensionality reduction")
 @click.option(
-    "--n-samples", type=int, default=5, help="Number of representative samples per cluster"
+    "--n-samples", type=int, default=7, help="Number of representative samples per cluster"
 )
 @click.option("--copy/--symlink", default=True, help="Copy files or create symlinks")
 @click.option("--create-splits", is_flag=True, help="Create train/val/test splits")
@@ -87,15 +88,22 @@ def annotate(
         console.print(f"[green]✓[/green] Loaded {len(images)} images\n")
 
         console.print(f"[cyan]Extracting embeddings using {model}...[/cyan]")
-        extractor = EmbeddingExtractor(model_name=model, batch_size=batch_size)
+        extractor = EmbeddingExtractor(
+            model_name=cast(Literal["clip", "dinov2", "dinov2-large", "siglip2"], model),
+            batch_size=batch_size,
+        )
         embeddings = extractor(images)
         console.print(f"[green]✓[/green] Extracted embeddings: {embeddings.shape}\n")
 
         console.print(f"[cyan]Clustering with {method}...[/cyan]")
-        clusterer = ClusteringEngine(method=method, n_clusters=n_clusters, reduce_dims=reduce_dims)
+        clusterer = ClusteringEngine(
+            method=cast(Literal["kmeans", "hdbscan", "spectral", "dbscan"], method),
+            n_clusters=n_clusters,
+            reduce_dims=reduce_dims,
+        )
         labels = clusterer.fit_predict(embeddings)
         stats = clusterer.get_cluster_stats(labels)
-        console.print(f"[green]✓[/green] Clustering complete\n")
+        console.print("[green]✓[/green] Clustering complete\n")
 
         session = InteractiveLabelingSession()
         session.display_cluster_stats(stats)
@@ -108,7 +116,9 @@ def annotate(
             f"[green]✓[/green] Found representatives for {len(representatives)} clusters\n"
         )
 
-        class_names = session.label_all_clusters(image_paths, labels, representatives, stats)
+        class_names = session.label_all_clusters(
+            image_paths, labels, representatives, stats, output_dir
+        )
 
         session.display_labeling_summary(class_names, labels)
 
@@ -118,7 +128,7 @@ def annotate(
 
         console.print("\n[cyan]Organizing dataset...[/cyan]")
         organizer = DatasetOrganizer(output_dir)
-        metadata = organizer.organize_by_clusters(
+        organizer.organize_by_clusters(
             image_paths, labels, class_names, copy_files=copy, create_symlinks=not copy
         )
         console.print(f"[green]✓[/green] Dataset organized in {output_dir}\n")
@@ -129,7 +139,7 @@ def annotate(
 
         if create_splits:
             console.print("[cyan]Creating train/val/test splits...[/cyan]")
-            split_info = organizer.create_split()
+            organizer.create_split()
             console.print(f"[green]✓[/green] Created splits in {output_dir / 'splits'}\n")
 
         session.show_completion_message(output_dir)

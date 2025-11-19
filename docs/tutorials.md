@@ -8,7 +8,7 @@ Step-by-step tutorials for using AutoAnnotate-Vision.
 
 1. **Launch the GUI:**
 ```bash
-python run_autoannotate_gui.py
+autoannotate-images
 ```
 
 2. **Select Input Folder**
@@ -48,7 +48,7 @@ python run_autoannotate_gui.py
 ### Run from Command Line
 
 ```bash
-autoannotate annotate ./my_images ./output \
+autoannotate-images-cli annotate ./my_images ./output \
     --n-clusters 5 \
     --method kmeans \
     --model dinov2 \
@@ -210,8 +210,7 @@ The HTML preview feature automatically:
 - Shows thumbnail grid of sample images
 - Displays cluster statistics
 - Uses responsive design
-- Saves to temp directory
-- Cleans up automatically after labeling
+- Saves to output directory for later reference
 
 You can also generate previews manually:
 
@@ -255,6 +254,18 @@ annotator = AutoAnnotator(
     clustering_method="kmeans",
     n_clusters=5,
     batch_size=8  # Lower batch size for large model
+)
+```
+
+### SigLIP2 for Best Results
+
+```python
+annotator = AutoAnnotator(
+    input_dir="./images",
+    output_dir="./output",
+    model="siglip2",  # Latest Google model - Recommended
+    clustering_method="kmeans",
+    n_clusters=5
 )
 ```
 
@@ -322,8 +333,9 @@ output/splits/
 ### 1. Choose the Right Model
 
 - **CLIP**: General images, faster
-- **DINOv2**: Recommended for most tasks
+- **DINOv2**: Good for objects, balanced performance
 - **DINOv2-Large**: When quality is critical
+- **SigLIP2**: Latest Google model - **Recommended for best results**
 
 ### 2. Set Appropriate Batch Size
 
@@ -390,7 +402,7 @@ my_images/
 ### Step 2: Run Auto-Annotation
 
 ```bash
-autoannotate annotate \
+autoannotate-images-cli annotate \
     ./my_images \
     ./annotated_output \
     --n-clusters 5 \
@@ -680,7 +692,7 @@ import time
 loader = ImageLoader("./images")
 images, _ = loader.load_images()
 
-models = ["clip", "dinov2", "dinov2-large"]
+models = ["clip", "dinov2", "dinov2-large", "siglip2"]
 
 for model in models:
     print(f"\nTesting {model}...")
@@ -703,7 +715,7 @@ for model in models:
 ### Validate Images Before Processing
 
 ```bash
-autoannotate validate ./images --recursive
+autoannotate-images-cli validate ./images --recursive
 ```
 
 ### Programmatic Validation
@@ -892,6 +904,7 @@ except Exception as e:
 - **CLIP**: Best for general images and when you need text-image alignment
 - **DINOv2**: Balanced performance, good for most use cases
 - **DINOv2-Large**: When quality is more important than speed
+- **SigLIP2**: Latest Google model - **Recommended for best results**
 
 ### 2. Select Clustering Method
 

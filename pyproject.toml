@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=65.0.0", "wheel"]
+requires = ["setuptools>=80.9.0", "wheel>=0.45.1"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,14 +7,14 @@ name = "autoannotate-vision"
 version = "0.1.0"
 description = "SOTA unsupervised auto-annotation SDK for image classification"
 readme = "README.md"
-requires-python = ">=3.8"
-license = {file = "LICENSE"}
+requires-python = ">=3.10,<3.14"
+license = { file = "LICENSE" }
 authors = [
-    {name = "MetaMind Innovations", email = "research@metamind-innovations.com"}
+    { name = "MetaMind Innovations", email = "research@metamind-innovations.com" }
 ]
 keywords = [
     "image-annotation",
-    "clustering", 
+    "clustering",
     "computer-vision",
     "auto-labeling",
     "machine-learning"
@@ -23,17 +23,20 @@ classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Topic :: Scientific/Engineering :: Image Recognition",
+    "Topic :: Scientific/Engineering :: Image Processing",
 ]
 
 dependencies = [
-    "numpy>=1.21.0",
+    "numpy>=2.0.0",
     "pillow>=9.0.0",
     "torch>=2.0.0",
     "torchvision>=0.15.0",
@@ -65,13 +68,13 @@ hdbscan = [
 ]
 
 [project.scripts]
-autoannotate = "autoannotate.ui.cli:main"
+autoannotate-images-cli = "autoannotate.ui.cli:main"
+autoannotate-images = "autoannotate.ui.gui:main"
 
 [project.urls]
-Homepage = "https://github.com/yourusername/autoannotate-vision"
-Documentation = "https://autoannotate-vision.readthedocs.io"
-Repository = "https://github.com/yourusername/autoannotate-vision"
-"Bug Tracker" = "https://github.com/yourusername/autoannotate-vision/issues"
+Homepage = "https://github.com/Metamind-Innovations/autoannotate-vision"
+Documentation = "https://github.com/Metamind-Innovations/autoannotate-vision/blob/main/README.md"
+Issues = "https://github.com/Metamind-Innovations/autoannotate-vision/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -81,7 +84,7 @@ autoannotate = ["py.typed"]
 
 [tool.black]
 line-length = 100
-target-version = ['py38', 'py39', 'py310', 'py311']
+target-version = ['py310', 'py311', 'py312', 'py313']
 include = '\.pyi?$'
 
 [tool.pytest.ini_options]
@@ -92,7 +95,8 @@ python_functions = ["test_*"]
 addopts = "-v --cov=autoannotate --cov-report=term-missing"
 
 [tool.mypy]
-python_version = "3.8"
+python_version = "3.10"
 warn_return_any = true
 warn_unused_configs = true
 ignore_missing_imports = true
+no_implicit_optional = true

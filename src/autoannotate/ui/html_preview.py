@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 import webbrowser
 import numpy as np
 
@@ -9,7 +9,7 @@ def generate_cluster_preview_html(
     image_paths: List[Path],
     indices: np.ndarray,
     cluster_size: int,
-    output_path: Path = None,
+    output_path: Optional[Path] = None,
 ) -> Path:
 
     if output_path is None:
@@ -95,11 +95,12 @@ def generate_cluster_preview_html(
                 👁️ Showing Representative Samples: <strong>{len(indices)}</strong>
             </div>
         </div>
-        
+
         <div class="instruction">
-            <strong>📝 Instructions:</strong> Review these sample images and return to the terminal to enter a class name for this cluster.
+            <strong>📝 Instructions:</strong> Review these sample images and return to the
+            terminal to enter a class name for this cluster.
         </div>
-        
+
         <div class="gallery">
     """
 

@@ -41,6 +41,7 @@ class InteractiveLabelingSession:
         image_paths: List[Path],
         representative_indices: np.ndarray,
         cluster_size: int,
+        output_dir: Path,
     ):
         self.console.print(
             Panel(
@@ -58,7 +59,7 @@ class InteractiveLabelingSession:
             image_paths=image_paths,
             indices=representative_indices,
             cluster_size=cluster_size,
-            output_path=Path(f"cluster_{cluster_id}_preview.html"),
+            output_path=output_dir / f"cluster_{cluster_id}_preview.html",
         )
 
         self.console.print(f"[green]✓ Preview generated: {html_path}[/green]")
@@ -106,6 +107,7 @@ class InteractiveLabelingSession:
         labels: np.ndarray,
         representative_indices: Dict[int, np.ndarray],
         cluster_stats: Dict,
+        output_dir: Path,
     ):
         self.console.print("\n[bold blue]Starting Interactive Labeling Session[/bold blue]\n")
 
@@ -118,7 +120,11 @@ class InteractiveLabelingSession:
                 continue
 
             class_name = self.get_class_name_for_cluster(
-                cluster_id, image_paths, representative_indices[cluster_id], cluster_size
+                cluster_id,
+                image_paths,
+                representative_indices[cluster_id],
+                cluster_size,
+                output_dir,
             )
 
             if class_name:
@@ -140,11 +146,11 @@ class InteractiveLabelingSession:
         table.add_column("Images", style="yellow")
 
         for cluster_id, class_name in sorted(class_names.items()):
-            n_images = np.sum(labels == cluster_id)
+            n_images: int = int(np.sum(labels == cluster_id))
             table.add_row(str(cluster_id), class_name, str(n_images))
 
         n_unlabeled = sum(1 for label in labels if label not in class_names and label != -1)
-        n_noise = np.sum(labels == -1)
+        n_noise: int = int(np.sum(labels == -1))
 
         if n_unlabeled > 0:
             table.add_row("-", "[dim]Unlabeled[/dim]", f"[dim]{n_unlabeled}[/dim]")

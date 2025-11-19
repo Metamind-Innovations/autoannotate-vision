@@ -1,7 +1,7 @@
 import json
 import shutil
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Any
 from datetime import datetime
 import numpy as np
 
@@ -19,8 +19,8 @@ class DatasetOrganizer:
         class_names: Dict[int, str],
         copy_files: bool = True,
         create_symlinks: bool = False,
-    ) -> Dict:
-        organized_data = {
+    ) -> Dict[str, Any]:
+        organized_data: Dict[str, Any] = {
             "metadata": {
                 "created_at": datetime.now().isoformat(),
                 "total_images": len(image_paths),
@@ -28,8 +28,6 @@ class DatasetOrganizer:
             },
             "classes": {},
         }
-
-        class_counters = {label: 0 for label in class_names.keys()}
 
         for img_path, label in zip(image_paths, labels):
             label = int(label)
@@ -101,7 +99,7 @@ class DatasetOrganizer:
             if d.is_dir() and d.name not in ["splits", "unclustered"]
         ]
 
-        split_info = {"train": [], "val": [], "test": []}
+        split_info: Dict[str, List[str]] = {"train": [], "val": [], "test": []}
 
         for class_dir in class_dirs:
             class_name = class_dir.name
@@ -110,7 +108,7 @@ class DatasetOrganizer:
             if len(images) == 0:
                 continue
 
-            np.random.shuffle(images)
+            np.random.shuffle(images)  # type: ignore[arg-type]
 
             n_train = int(len(images) * train_ratio)
             n_val = int(len(images) * val_ratio)
@@ -129,7 +127,11 @@ class DatasetOrganizer:
 
                 for img in split_imgs:
                     dest = split_class_dir / img.name
-                    dest.symlink_to(img.absolute())
+                    try:
+                        dest.symlink_to(img.absolute())
+                    except (OSError, NotImplementedError):
+                        # Fallback to copying if symlink fails (e.g., Windows without admin)
+                        shutil.copy2(img, dest)
                     split_info[split_name].append(str(dest))
 
         split_metadata_path = splits_dir / "split_info.json"

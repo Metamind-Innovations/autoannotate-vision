@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 from PIL import Image
 import logging
 
@@ -40,7 +40,9 @@ class ImageLoader:
         logger.info(f"Found {len(image_paths)} images")
         return sorted(image_paths)
 
-    def load_images(self, max_size: Tuple[int, int] = None) -> Tuple[List[Image.Image], List[Path]]:
+    def load_images(
+        self, max_size: Optional[Tuple[int, int]] = None
+    ) -> Tuple[List[Image.Image], List[Path]]:
         image_paths = self.load_image_paths()
         images = []
         valid_paths = []
