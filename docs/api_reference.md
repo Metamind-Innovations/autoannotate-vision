@@ -7,7 +7,7 @@ Complete API documentation for AutoAnnotate-Vision.
 ### Running the GUI
 
 ```bash
-python run_autoannotate_gui.py
+autoannotate-images
 ```
 
 The GUI provides:
@@ -27,8 +27,8 @@ Main class for the auto-annotation pipeline.
 class AutoAnnotator(
     input_dir: Path,
     output_dir: Path,
-    model: Literal["clip", "dinov2", "dinov2-large"] = "dinov2",
-    clustering_method: Literal["kmeans", "spectral", "dbscan"] = "kmeans",
+    model: Literal["clip", "dinov2", "dinov2-large", "siglip2"] = "dinov2",
+    clustering_method: Literal["kmeans", "hdbscan", "spectral", "dbscan"] = "kmeans",
     n_clusters: Optional[int] = None,
     batch_size: int = 32,
     recursive: bool = False,
@@ -111,7 +111,7 @@ Creates a beautiful HTML page with:
 - Hover effects
 - Responsive design
 
-Saved to temp directory by default and auto-cleaned after use.
+Saved to output directory by default for later reference.
 
 ---
 
@@ -123,7 +123,7 @@ Extract embeddings from images using pre-trained vision models.
 
 ```python
 class EmbeddingExtractor(
-    model_name: Literal["clip", "dinov2", "dinov2-large"] = "dinov2",
+    model_name: Literal["clip", "dinov2", "dinov2-large", "siglip2"] = "dinov2",
     device: Optional[str] = None,
     batch_size: int = 32
 )
@@ -203,8 +203,9 @@ Create train/val/test splits.
 | Model | Embedding Dim | Speed | Best For |
 |-------|---------------|-------|----------|
 | `clip` | 768 | Fast | General images |
-| `dinov2` | 768 | Fast | Recommended |
+| `dinov2` | 768 | Fast | Good for objects |
 | `dinov2-large` | 1024 | Slower | High quality |
+| `siglip2` | 768 | Fast | Latest Google model - **Recommended** |
 
 ### Clustering Methods
 
@@ -221,10 +222,10 @@ Create train/val/test splits.
 
 ## CLI Commands
 
-### `autoannotate annotate`
+### `autoannotate-images-cli annotate`
 
 ```bash
-autoannotate annotate INPUT_DIR OUTPUT_DIR [OPTIONS]
+autoannotate-images-cli annotate INPUT_DIR OUTPUT_DIR [OPTIONS]
 ```
 
 **Options:**
@@ -241,7 +242,7 @@ autoannotate annotate INPUT_DIR OUTPUT_DIR [OPTIONS]
 ### GUI Usage
 
 ```bash
-python run_autoannotate_gui.py
+autoannotate-images
 ```
 
 Click buttons, select folders, click "Start". HTML previews open automatically!
@@ -286,7 +287,7 @@ Main class for the auto-annotation pipeline.
 class AutoAnnotator(
     input_dir: Path,
     output_dir: Path,
-    model: Literal["clip", "dinov2", "dinov2-large"] = "dinov2",
+    model: Literal["clip", "dinov2", "dinov2-large", "siglip2"] = "dinov2",
     clustering_method: Literal["kmeans", "hdbscan", "spectral", "dbscan"] = "kmeans",
     n_clusters: Optional[int] = None,
     batch_size: int = 32,
@@ -381,7 +382,7 @@ Extract embeddings from images using pre-trained vision models.
 
 ```python
 class EmbeddingExtractor(
-    model_name: Literal["clip", "dinov2", "dinov2-large"] = "dinov2",
+    model_name: Literal["clip", "dinov2", "dinov2-large", "siglip2"] = "dinov2",
     device: Optional[str] = None,
     batch_size: int = 32
 )
@@ -524,8 +525,15 @@ class InteractiveLabelingSession()
 
 **Methods:**
 
-#### `label_all_clusters(image_paths, labels, representative_indices, cluster_stats)`
+#### `label_all_clusters(image_paths, labels, representative_indices, cluster_stats, output_dir)`
 Run interactive labeling for all clusters.
+
+**Parameters:**
+- `image_paths`: List of image file paths
+- `labels`: Cluster labels array
+- `representative_indices`: Representative sample indices for each cluster
+- `cluster_stats`: Clustering statistics dictionary
+- `output_dir`: Directory where HTML preview files will be saved
 
 **Returns:** `Dict[int, str]` - Cluster ID to class name mapping
 
@@ -546,6 +554,7 @@ Display summary of labeling results.
 | `clip` | 768 | General images, text-image tasks |
 | `dinov2` | 768 | General images, balanced speed/quality |
 | `dinov2-large` | 1024 | High-quality, complex datasets |
+| `siglip2` | 768 | Latest Google model - **Recommended** |
 
 ### Clustering Methods
 
@@ -560,12 +569,12 @@ Display summary of labeling results.
 
 ## CLI Commands
 
-### `autoannotate annotate`
+### `autoannotate-images-cli annotate`
 
 Main annotation command.
 
 ```bash
-autoannotate annotate INPUT_DIR OUTPUT_DIR [OPTIONS]
+autoannotate-images-cli annotate INPUT_DIR OUTPUT_DIR [OPTIONS]
 ```
 
 **Options:**
@@ -580,12 +589,12 @@ autoannotate annotate INPUT_DIR OUTPUT_DIR [OPTIONS]
 - `--create-splits`: Create train/val/test splits
 - `--export-format`: Labels export format
 
-### `autoannotate validate`
+### `autoannotate-images-cli validate`
 
 Validate image files.
 
 ```bash
-autoannotate validate INPUT_DIR [OPTIONS]
+autoannotate-images-cli validate INPUT_DIR [OPTIONS]
 ```
 
 **Options:**

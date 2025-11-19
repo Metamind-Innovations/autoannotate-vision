@@ -23,7 +23,6 @@ class AutoAnnotateGUI:
         self.output_folder = tk.StringVar()
         self.n_clusters = tk.IntVar(value=5)
         self.model_choice = tk.StringVar(value="dinov2")
-        self.batch_size = tk.IntVar(value=16)
 
         self.create_widgets()
 
@@ -95,14 +94,6 @@ class AutoAnnotateGUI:
         )
         model_combo.grid(row=3, column=1, sticky="w", padx=10)
 
-        # Batch Size
-        tk.Label(frame, text="Batch Size:", font=("Arial", 11, "bold")).grid(
-            row=4, column=0, sticky="w", pady=8
-        )
-        tk.Spinbox(
-            frame, from_=1, to=64, textvariable=self.batch_size, width=10, font=("Arial", 10)
-        ).grid(row=4, column=1, sticky="w", padx=10)
-
         # Status Label
         self.status_label = tk.Label(
             self.root, text="Ready to start", font=("Arial", 10), fg="blue"
@@ -169,7 +160,7 @@ class AutoAnnotateGUI:
                 model=self.model_choice.get(),
                 clustering_method="kmeans",
                 n_clusters=self.n_clusters.get(),
-                batch_size=self.batch_size.get(),
+                batch_size=16,
                 reduce_dims=True,
             )
 

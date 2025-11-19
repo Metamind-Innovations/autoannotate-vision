@@ -38,10 +38,10 @@ pip install -e .
 
 ## 🎨 Quick Start - GUI
 
-The easiest way to use AutoAnnotate-Vision:
+The easiest and most simplified way to use AutoAnnotate-Vision:
 
 ```bash
-autoannotate-gui
+autoannotate-images
 ```
 
 **Note:** Windows users need to have the latest C++ Redistributable installed which can be
@@ -60,8 +60,10 @@ labeling!
 
 ## 💻 CLI Usage
 
+For extra commands and utilities.
+
 ```bash
-autoannotate annotate /path/to/images /path/to/output \
+autoannotate-images-cli annotate /path/to/images /path/to/output \
     --n-clusters 10 \
     --method kmeans \
     --model siglip2 \
@@ -138,8 +140,8 @@ black src/autoannotate tests
 # Run tests
 pytest tests/ -v
 
-# Check everything at once
-black --check src/autoannotate tests && pytest tests/ -v
+# Typing
+mypy src/autoannotate --ignore-missing-imports
 ```
 
 ## 🤝 Contributing
@@ -147,8 +149,9 @@ black --check src/autoannotate tests && pytest tests/ -v
 1. Fork the repository
 2. Create feature branch
 3. **Format with Black**: `black src/autoannotate tests`
-4. **Run tests**: `pytest tests/ -v`
-5. Push and create PR
+4. **Check typing with mypy**: `mypy src/autoannotate --ignore-missing-imports`
+5. **Run tests**: `pytest tests/ -v`
+6. Push and create PR
 
 ## 📄 License
 

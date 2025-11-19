@@ -127,7 +127,11 @@ class DatasetOrganizer:
 
                 for img in split_imgs:
                     dest = split_class_dir / img.name
-                    dest.symlink_to(img.absolute())
+                    try:
+                        dest.symlink_to(img.absolute())
+                    except (OSError, NotImplementedError):
+                        # Fallback to copying if symlink fails (e.g., Windows without admin)
+                        shutil.copy2(img, dest)
                     split_info[split_name].append(str(dest))
 
         split_metadata_path = splits_dir / "split_info.json"

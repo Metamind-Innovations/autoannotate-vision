@@ -43,16 +43,16 @@ def cli():
 @click.option(
     "--model",
     type=click.Choice(["clip", "dinov2", "dinov2-large", "siglip2"]),
-    default="dinov2",
+    default="siglip2",
     help="Embedding model",
 )
 @click.option(
-    "--batch-size", "-b", type=int, default=32, help="Batch size for embedding extraction"
+    "--batch-size", "-b", type=int, default=16, help="Batch size for embedding extraction"
 )
 @click.option("--recursive", "-r", is_flag=True, help="Search for images recursively")
 @click.option("--reduce-dims/--no-reduce-dims", default=True, help="Apply dimensionality reduction")
 @click.option(
-    "--n-samples", type=int, default=5, help="Number of representative samples per cluster"
+    "--n-samples", type=int, default=7, help="Number of representative samples per cluster"
 )
 @click.option("--copy/--symlink", default=True, help="Copy files or create symlinks")
 @click.option("--create-splits", is_flag=True, help="Create train/val/test splits")
@@ -116,7 +116,9 @@ def annotate(
             f"[green]✓[/green] Found representatives for {len(representatives)} clusters\n"
         )
 
-        class_names = session.label_all_clusters(image_paths, labels, representatives, stats, output_dir)
+        class_names = session.label_all_clusters(
+            image_paths, labels, representatives, stats, output_dir
+        )
 
         session.display_labeling_summary(class_names, labels)
 

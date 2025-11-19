@@ -1,10 +1,12 @@
 # AutoAnnotate-Vision Documentation
 
-Welcome to **AutoAnnotate-Vision** - a state-of-the-art SDK for unsupervised image auto-annotation with a graphical user interface!
+Welcome to **AutoAnnotate-Vision** - a state-of-the-art SDK for unsupervised image auto-annotation with a graphical user
+interface!
 
 ## What is AutoAnnotate-Vision?
 
-AutoAnnotate-Vision automatically clusters and organizes unlabeled image datasets using cutting-edge vision models (CLIP, DINOv2). It features:
+AutoAnnotate-Vision automatically clusters and organizes unlabeled image datasets using cutting-edge vision models (
+CLIP, DINOv2, SigLIP2). It features:
 
 - 🎨 **Graphical User Interface** for easy folder selection and configuration
 - 🖼️ **HTML Preview** that opens sample images in your browser before labeling
@@ -17,7 +19,7 @@ AutoAnnotate-Vision automatically clusters and organizes unlabeled image dataset
 ### Using the GUI (Easiest!)
 
 ```bash
-python run_autoannotate_gui.py
+autoannotate-images
 ```
 
 1. Select input folder with images
@@ -31,7 +33,7 @@ python run_autoannotate_gui.py
 ### Using the CLI
 
 ```bash
-autoannotate annotate /path/to/images /path/to/output \
+autoannotate-images-cli annotate /path/to/images /path/to/output \
     --n-clusters 10 \
     --method kmeans \
     --model dinov2
@@ -57,11 +59,13 @@ result = annotator.run_full_pipeline()
 
 ### HTML Image Preview
 
-When labeling clusters, AutoAnnotate automatically opens beautiful HTML previews in your browser showing representative sample images from each cluster. No more guessing what's in each cluster!
+When labeling clusters, AutoAnnotate automatically opens beautiful HTML previews in your browser showing representative
+sample images from each cluster. No more guessing what's in each cluster!
 
 ### Original Filenames Preserved
 
-Unlike other tools, AutoAnnotate **preserves your original filenames**. Images are organized into class folders without renaming:
+Unlike other tools, AutoAnnotate **preserves your original filenames**. Images are organized into class folders without
+renaming:
 
 ```
 output/
@@ -91,6 +95,7 @@ pip install autoannotate-vision
 ```
 
 Or from source:
+
 ```bash
 git clone https://github.com/Metamind-Innovations/autoannotate-vision.git
 cd autoannotate-vision
