@@ -2,6 +2,7 @@ import click
 from pathlib import Path
 import logging
 from typing import Literal, cast
+from importlib.metadata import version
 from rich.console import Console
 from rich.logging import RichHandler
 
@@ -22,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 
 @click.group()
-@click.version_option(version="0.1.0")
+@click.version_option(version=version("autoannotate-vision"))
 def cli():
     pass
 

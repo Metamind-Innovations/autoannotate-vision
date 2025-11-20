@@ -9,8 +9,6 @@ from autoannotate.core.organizer import DatasetOrganizer
 from autoannotate.ui.interactive import InteractiveLabelingSession
 from autoannotate.utils.image_loader import ImageLoader
 
-__version__ = "0.1.0"
-
 __all__ = [
     "AutoAnnotator",
     "EmbeddingExtractor",
