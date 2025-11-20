@@ -4,13 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "autoannotate-vision"
-version = "0.0.5"
+version = "0.0.6"
 description = "SOTA unsupervised auto-annotation SDK for image classification"
 readme = "README.md"
 requires-python = ">=3.10,<3.14"
 license = { file = "LICENSE" }
 authors = [
-    { name = "MetaMind Innovations", email = "research@metamind-innovations.com" }
+    { name = "MetaMind Innovations", email = "info@metamind.gr" }
 ]
 keywords = [
     "image-annotation",
@@ -20,7 +20,7 @@ keywords = [
     "machine-learning"
 ]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",

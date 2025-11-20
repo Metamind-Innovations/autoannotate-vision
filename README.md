@@ -161,4 +161,4 @@ MIT License - see [LICENSE](LICENSE) file.
 
 Built with PyTorch, Transformers, scikit-learn. Vision models: CLIP, DINOv2, SigLIP2.
 
-**Made for the [RAIDO Project](https://raido-project.eu/)**
+**Made for the [RAIDO Project](https://raido-project.eu/), from [MetaMind Innovations](https://metamind.gr/)**
