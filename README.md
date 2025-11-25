@@ -159,6 +159,11 @@ MIT License - see [LICENSE](LICENSE) file.
 
 ## 🙏 Acknowledgments
 
-Built with PyTorch, Transformers, scikit-learn. Vision models: CLIP, DINOv2, SigLIP2.
+Built with `PyTorch`, `Transformers`, `scikit-learn` and more. Vision models: CLIP, DINOv2, SigLIP2.
 
 **Made for the [RAIDO Project](https://raido-project.eu/), from [MetaMind Innovations](https://metamind.gr/)**
+
+---
+
+**Sister Project**: [AutoAnnotate-Timeseries](https://github.com/Metamind-Innovations/autoannotate-timeseries) - For
+time series auto-annotation
