@@ -41,9 +41,26 @@ class ImageLoader:
         return sorted(image_paths)
 
     def load_images(
-        self, max_size: Optional[Tuple[int, int]] = None
+        self, max_size: Optional[Tuple[int, int]] = None, lazy: bool = False
     ) -> Tuple[List[Image.Image], List[Path]]:
+        """
+        Load images from directory.
+
+        Args:
+            max_size: Optional max size for thumbnail resizing
+            lazy: If True, only return paths without loading images (fast for large datasets)
+
+        Returns:
+            Tuple of (images, paths). If lazy=True, images will be empty list.
+        """
         image_paths = self.load_image_paths()
+
+        # For lazy loading, just validate paths and return them without loading
+        if lazy:
+            logger.info(f"Lazy loading: Found {len(image_paths)} image paths")
+            return [], image_paths
+
+        # Original eager loading behavior
         images = []
         valid_paths = []
 

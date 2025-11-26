@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 import threading
+import time
 
 try:
     import tkinter as tk
@@ -149,6 +150,9 @@ class AutoAnnotateGUI:
 
     def annotation_process(self, input_dir, output_dir):
         try:
+            # Start timing
+            start_time = time.time()
+
             self.run_button.config(state="disabled")
             self.progress.start()
 
@@ -162,16 +166,18 @@ class AutoAnnotateGUI:
                 n_clusters=self.n_clusters.get(),
                 batch_size=16,
                 reduce_dims=True,
+                lazy_loading=True,  # Enable lazy loading for large datasets
             )
 
-            self.update_status("Loading images...", "blue")
+            self.update_status("Scanning images...", "blue")
             images, paths = annotator.load_images()
-            self.update_status(f"✓ Loaded {len(images)} images", "green")
-            if len(images) < self.n_clusters.get() * 3:
+            n_images = len(paths) if annotator.lazy_loading else len(images)
+            self.update_status(f"✓ Found {n_images} images", "green")
+            if n_images < self.n_clusters.get() * 3:
                 n_clusters = self.n_clusters.get()
                 response = messagebox.askyesno(
                     "Small Dataset Warning",
-                    f"You have {len(images)} images but requested {n_clusters} clusters.\n\n"
+                    f"You have {n_images} images but requested {n_clusters} clusters.\n\n"
                     f"Recommended: At least {n_clusters * 3} images for good clustering.\n\n"
                     f"Continue anyway?",
                 )
@@ -189,7 +195,20 @@ class AutoAnnotateGUI:
             self.update_status(f"✓ Found {stats['n_clusters']} clusters", "green")
 
             self.progress.stop()
-            self.update_status("Opening HTML preview for labeling...", "orange")
+
+            # Calculate elapsed time for automated processing
+            elapsed_time = time.time() - start_time
+            minutes = int(elapsed_time // 60)
+            seconds = int(elapsed_time % 60)
+
+            if minutes > 0:
+                time_str = f"{minutes}m {seconds}s"
+            else:
+                time_str = f"{seconds}s"
+
+            self.update_status(
+                f"Opening HTML preview for labeling... (processing took {time_str})", "orange"
+            )
 
             # Interactive labeling (will open HTML previews)
             class_names = annotator.interactive_labeling(n_samples=6)
@@ -207,8 +226,9 @@ class AutoAnnotateGUI:
                 messagebox.showinfo(
                     "Success",
                     f"✓ Annotation Complete!\n\n"
-                    f"Processed: {len(images)} images\n"
+                    f"Processed: {n_images} images\n"
                     f"Classes: {len(class_names)}\n"
+                    f"Processing time: {time_str}\n"
                     f"Output: {output_dir}\n\n"
                     f"Images are organized in class folders with original filenames preserved.",
                 )

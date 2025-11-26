@@ -124,11 +124,41 @@ def test_full_pipeline(temp_image_dir, temp_output_dir):
         n_clusters=3,
         batch_size=8,
         reduce_dims=False,
+        lazy_loading=False,  # Disable lazy loading for test to load images into memory
     )
 
     images, paths = annotator.load_images()
     assert len(images) == 20
 
+    embeddings = annotator.extract_embeddings()
+    assert embeddings.shape[0] == 20
+
+    labels = annotator.cluster()
+    assert len(labels) == 20
+
+    stats = annotator.get_cluster_stats()
+    assert stats["n_clusters"] <= 3
+
+
+def test_full_pipeline_with_lazy_loading(temp_image_dir, temp_output_dir):
+    annotator = AutoAnnotator(
+        input_dir=temp_image_dir,
+        output_dir=temp_output_dir,
+        model="dinov2",
+        clustering_method="kmeans",
+        n_clusters=3,
+        batch_size=8,
+        reduce_dims=False,
+        lazy_loading=True,  # Enable lazy loading
+    )
+
+    images, paths = annotator.load_images()
+    # With lazy loading, images should be empty
+    assert len(images) == 0
+    # But paths should contain all image files
+    assert len(paths) == 20
+
+    # Embeddings should still be extracted correctly from paths
     embeddings = annotator.extract_embeddings()
     assert embeddings.shape[0] == 20
 

@@ -31,6 +31,7 @@ class AutoAnnotator:
         batch_size: int = 32,
         recursive: bool = False,
         reduce_dims: bool = True,
+        lazy_loading: bool = True,
     ):
         self.input_dir = Path(input_dir)
         self.output_dir = Path(output_dir)
@@ -40,6 +41,7 @@ class AutoAnnotator:
         self.batch_size = batch_size
         self.recursive = recursive
         self.reduce_dims = reduce_dims
+        self.lazy_loading = lazy_loading
 
         self.loader: Optional[ImageLoader] = None
         self.extractor: Optional[EmbeddingExtractor] = None
@@ -54,15 +56,22 @@ class AutoAnnotator:
 
     def load_images(self):
         self.loader = ImageLoader(self.input_dir, recursive=self.recursive)
-        self.images, self.image_paths = self.loader.load_images()
+        self.images, self.image_paths = self.loader.load_images(lazy=self.lazy_loading)
         return self.images, self.image_paths
 
     def extract_embeddings(self):
-        if self.images is None:
+        if self.image_paths is None:
             raise ValueError("Load images first using load_images()")
 
         self.extractor = EmbeddingExtractor(model_name=self.model, batch_size=self.batch_size)
-        self.embeddings = self.extractor(self.images)
+
+        if self.lazy_loading:
+            self.embeddings = self.extractor(self.image_paths)
+        else:
+            if self.images is None:
+                raise ValueError("Images not loaded. Use lazy_loading=False with load_images()")
+            self.embeddings = self.extractor(self.images)
+
         return self.embeddings
 
     def cluster(self):

@@ -83,17 +83,19 @@ def annotate(
         if method in ["kmeans", "spectral"] and n_clusters is None:
             raise click.UsageError(f"--n-clusters is required for {method} clustering")
 
-        console.print(f"[cyan]Loading images from:[/cyan] {input_dir}")
+        console.print(f"[cyan]Scanning images from:[/cyan] {input_dir}")
         loader = ImageLoader(input_dir, recursive=recursive)
-        images, image_paths = loader.load_images()
-        console.print(f"[green]✓[/green] Loaded {len(images)} images\n")
+        # Use lazy loading for better memory efficiency with large datasets
+        images, image_paths = loader.load_images(lazy=True)
+        console.print(f"[green]✓[/green] Found {len(image_paths)} images\n")
 
         console.print(f"[cyan]Extracting embeddings using {model}...[/cyan]")
         extractor = EmbeddingExtractor(
             model_name=cast(Literal["clip", "dinov2", "dinov2-large", "siglip2"], model),
             batch_size=batch_size,
         )
-        embeddings = extractor(images)
+        # Pass paths instead of loaded images
+        embeddings = extractor(image_paths)
         console.print(f"[green]✓[/green] Extracted embeddings: {embeddings.shape}\n")
 
         console.print(f"[cyan]Clustering with {method}...[/cyan]")
