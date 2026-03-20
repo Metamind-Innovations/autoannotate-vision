@@ -179,6 +179,10 @@ Built with `PyTorch`, `Transformers`, `scikit-learn` and more. Vision models: CL
 
 **Made for the [RAIDO Project](https://raido-project.eu/), from [MetaMind Innovations](https://metamind.gr/)**
 
+🇪🇺 RAIDO project has received funding from the European Union's Horizon Europe research and innovation programme under **Grant Agreement No. 101135800**.
+
+*Disclaimer: Funded by the European Union. Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or European Commission. Neither the European Union nor the European Commission can be held responsible for them.*
+
 ---
 
 **Sister Project**: [AutoAnnotate-Timeseries](https://github.com/Metamind-Innovations/autoannotate-timeseries) - For
